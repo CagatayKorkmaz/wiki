@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velmor Wiki - Sayfa</title>
+  <link rel="icon" href="../content/velmor.png" type="image/png">
+  <link rel="shortcut icon" href="../content/velmor.png" type="image/png">
+  <meta http-equiv="Content-Security-Policy" content=" default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://esm.sh https://*.supabase.co https://*.supabase.in; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' https://*.supabase.co https://*.supabase.in https://esm.sh https://cdn.jsdelivr.net; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+  <!-- Fontlar -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <style type="text/tailwindcss">
+    body { font-family: 'Cinzel', serif; background-image: url('bg.jpg'); background-size: cover; background-position: center; background-attachment: fixed; }
+    :root { --gold-color: #D4AF37; }
+    p { font-family: 'EB Garamond', serif; }
+    header nav a { font-size: 0.9rem; }
+    @media (min-width: 768px) {
+      header nav a { font-size: 0.95rem; }
+    }
+    .modal-enter { opacity: 0; transform: translateY(-10px) scale(0.98); }
+    .modal-enter-active { transition: all 220ms ease-out; opacity: 1; transform: translateY(0) scale(1); }
+    .modal-leave { opacity: 1; transform: translateY(0) scale(1); }
+    .modal-leave-active { transition: all 180ms ease-in; opacity: 0; transform: translateY(-8px) scale(0.99); }
+    #child-header span { margin-top: 2em; }
+    /* Infobox: float right on larger screens, full-width on small screens */
+    #page-sidebar {
+      float: right;
+      width: 320px;
+      margin-left: 1rem;
+      box-sizing: border-box;
+    }
+    /* Ensure tables inside fill the sidebar width */
+    #page-sidebar table { width: 100%; }
+    #page-sidebar td img {margin-top: -2rem!important;}
+    /* On narrow screens, disable float and use full width */
+    @media (max-width: 768px) {
+      #page-sidebar {
+        float: none;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 1rem;
+      }
+    }
+    /* Page header: use flex instead of floats for stable layout */
+    .page-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+    .page-header h1#title { margin: 0; line-height: 1.1; }
+    .page-header p.text-gray-400 { margin: 0; text-align: right; }
+    /* Style the <em id="meta"> inside the paragraph to look like metadata */
+    em#meta { font-style: normal; color: #9CA3AF; font-size: 0.95rem; }
+    /* Slightly larger paragraph text inside main content */
+    #content h2 { margin-bottom: 0;}
+    #content p { font-size: 1.0625rem; }
+    /* Content images: float left with limited width and spacing */
+    #content img {
+      float: left;
+      max-width: 320px;
+      width: 100%;
+      height: auto;
+      margin: 0 1rem 0.75rem 0;
+      border-radius: 0.125rem;
+      cursor: pointer;
+    }
+
+    /* Notion columns (column_list) */
+    .notion-columns { display: flex; gap: 1rem; align-items: flex-start; }
+    .notion-column { flex: 1 1 0; min-width: 0; }
+    .notion-column > :first-child { margin-top: 0; }
+    .notion-column > :last-child { margin-bottom: 0; }
+    @media (max-width: 768px) {
+      .notion-columns { flex-direction: column; }
+    }
+    /* Prevent global floated-image rules from breaking column layout */
+    .notion-columns img { float: none; max-width: 100%; margin: 0 0 0.75rem 0; }
+
+    /* Tables (Notion/Markdown) */
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0;
+      background: rgba(8, 8, 8, 0.55);
+      margin: 1rem 0;
+    }
+    #content table.wiki-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      color: #e5e7eb;
+    }
+    #content table.wiki-table th,
+    #content table.wiki-table td {
+      padding: 0.65rem 0.75rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      vertical-align: top;
+      white-space: normal;
+    }
+    #content table.wiki-table tr > :last-child { border-right: 0; }
+    #content table.wiki-table tbody tr:last-child > * { border-bottom: 0; }
+    #content table.wiki-table thead th {
+      position: sticky;
+      top: 0;
+      background: rgba(8, 8, 8, 0.92);
+      color: var(--gold-color);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      z-index: 1;
+    }
+    #content table.wiki-table tbody tr:nth-child(odd) { background: rgba(255, 255, 255, 0.03); }
+    #content table.wiki-table tbody tr:hover { background: rgba(212, 175, 55, 0.08); }
+    #content table.wiki-table a { color: var(--gold-color) !important; }
+    /* Prevent global floated-image rules from breaking tables */
+    #content table.wiki-table img { float: none; max-width: 100%; margin: 0; }
+    /* Sorting affordance */
+    #content table.wiki-table thead th.is-sortable { cursor: pointer; user-select: none; }
+    #content table.wiki-table thead th.is-sortable:hover { background: rgba(212, 175, 55, 0.10); }
+    #content table.wiki-table thead th[aria-sort="ascending"]::after { content: " ▲"; color: rgba(212, 175, 55, 0.9); font-size: 0.9em; }
+    #content table.wiki-table thead th[aria-sort="descending"]::after { content: " ▼"; color: rgba(212, 175, 55, 0.9); font-size: 0.9em; }
+
+    /* Table of Contents (TOC) */
+    #toc {
+      display: inline-block;
+      max-width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(8, 8, 8, 0.55);
+      padding: 0.55rem 0.7rem;
+      margin: 0 0 1rem 0;
+      border-radius: 0;
+    }
+    #toc[data-fixed-width="1"] { width: var(--toc-width); }
+    #toc .toc-title,
+    #toc summary.toc-title {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-color);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 0.78rem;
+      margin-bottom: 0.45rem;
+    }
+    #toc summary.toc-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 0;
+      list-style: none;
+    }
+    #toc[open] summary.toc-title { margin-bottom: 0.45rem; }
+    #toc summary.toc-title::-webkit-details-marker { display: none; }
+    #toc .toc-caret {
+      color: rgba(212, 175, 55, 0.9);
+      transition: transform 160ms ease;
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+    #toc[open] .toc-caret { transform: rotate(0deg); }
+    #toc:not([open]) .toc-caret { transform: rotate(-90deg); }
+    #toc .toc-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      font-family: 'Cinzel', serif;
+    }
+    #toc .toc-item { margin: 0.22rem 0; }
+    #toc .toc-h3 { padding-left: 0.75rem; opacity: 0.95; }
+    #toc a {
+      font-family: 'Cinzel', serif;
+      color: #e5e7eb !important;
+      text-decoration: none;
+      display: inline-block;
+      border-left: 2px solid transparent;
+      padding-left: 0.4rem;
+      font-size: 0.82rem;
+      line-height: 1.25;
+    }
+    #toc a:hover {
+      color: #f3f4f6 !important;
+      border-left-color: var(--gold-color);
+      text-decoration: none;
+    }
+
+    /* Notion Callouts */
+    #content .notion-callout {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(8, 8, 8, 0.55);
+      border-radius: 0;
+      padding: 0.75rem 0.85rem;
+      margin: 0 1rem 0.75rem 0;
+      width: 340px;
+      max-width: 100%;
+      box-sizing: border-box;
+      font-family: 'EB Garamond', serif;
+      color: #e5e7eb;
+    }
+    #content .notion-callout--pink { float: left; }
+    #content .notion-callout--red { float: right; margin: 0 0 0.75rem 1rem; }
+    #content .notion-callout--default { float: none; width: auto; margin: 0 0 1rem 0; }
+    #content .notion-callout__header {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    #content .notion-callout__icon { font-size: 1.1rem; line-height: 1.1; margin-top: 0.05rem; }
+    #content .notion-callout__text { font-size: 1.02rem; line-height: 1.35; }
+    #content .notion-callout p { margin-top: 0.4rem; margin-bottom: 0.55rem; }
+    #content .notion-callout > :last-child { margin-bottom: 0; }
+    /* Prevent global floated-image rules from breaking callouts */
+    #content .notion-callout img { float: none; max-width: 100%; margin: 0.35rem 0 0.6rem 0; }
+    @media (max-width: 768px) {
+      #content .notion-callout,
+      #content .notion-callout--pink,
+      #content .notion-callout--red,
+      #content .notion-callout--default {
+        float: none;
+        width: 100%;
+        margin: 0 0 1rem 0;
+      }
+    }
+    #content a, td a{ color: #D4AF37!important; text-decoration: none!important; font-weight: normal!important; }
+    #content a strong, #content a b, strong a, b a { font-weight: normal!important; color: inherit!important; }
+    #content a:hover, td a:hover { color: #be9d30!important; text-decoration: underline!important; }
+    /* TOC link color override (TOC renders inside #content) */
+    #content #toc a { font-family: 'Cinzel', serif; color: #e5e7eb !important; text-decoration: none !important; }
+    #content #toc a:hover { color: var(--gold-color) !important; text-decoration: none !important; }
+    #content ul li, #content ol li { font-family: 'EB Garamond'; }
+    #content strong { color: #d6d6d6; }
+    /* Child pages */
+    #child-pages li { padding-inline-start: 0; margin: 0; }
+    /* Sidebar images should also be clickable */
+    #page-sidebar img { cursor: pointer; }
+    #page-sidebar table { margin-bottom: 0; }
+    #page-sidebar table tr { border-color: rgba(255, 255, 255, 0.1)!important; }
+    #page-sidebar hr { border-color: #374151!important; }
+    #child-content a { text-decoration: none; }
+    
+    /* INFOBOX KİŞİSELLEŞTİRME: Yazı boyutlarını buradan dilediğin gibi oynayabilirsin  */
+    .infobox-title { font-size: 0.9rem; }            /* Infobox Başlığı (Örn: AURELION IMPARATORLUGU) */
+    .infobox-header { font-size: 0.87rem; }           /* Kategori başlıkları (Örn: GENEL BİLGİLER) */
+    .infobox-key { font-size: 0.85rem; }              /* Sol taraf anahtarları (Örn: TÜR, BAŞKENT) */
+    .infobox-val { font-size: 0.85rem; }              /* Sağ taraf değerleri (Örn: İMPARATORLUK) */
+    tr td img { margin-bottom : 0.8rem!important; }
+
+    @media (max-width: 768px) {
+      #content img {
+        float: none;
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 0.75rem auto;
+      }
+    }
+    /* Responsive: stack on small screens */
+    @media (max-width: 640px) {
+      .page-header { display: block; }
+      .page-header h1#title { margin-bottom: 0.25rem; }
+      .page-header p.text-gray-400 { text-align: left; }
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: 'var(--gold-color)',
+            'background-dark': '#111827',
+            'card-dark': 'rgba(0, 0, 0, 0.55)',
+            'border-dark': 'rgba(255, 255, 255, 0.1)',
+            'text-dark': '#D1D5DB',
+          },
+          fontFamily: { display: ['Cinzel', 'serif'] },
+          spacing: {
+            '28': '7rem',
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="bg-background-dark text-text-dark min-h-screen">
+  <div id="pageBackgroundOverlay" style="position:fixed; inset:0; z-index:0; background: rgba(0,0,0,0.6); pointer-events:none; backdrop-filter: blur(4px);"></div>
+
+  <div class="relative z-10 px-4 md:px-8 lg:px-12 xl:px-28 py-8">
+    <!-- Navbar -->
+    <header class="flex justify-between items-center mb-12">
+      <a href="index.html" class="text-2xl md:text-3xl font-bold text-white hover:text-gold transition-colors">VELMOR WIKI</a>
+      <nav class="flex items-center space-x-6 text-white text-base md:text-lg">
+        <a href="../index.html" class="hover:text-gold transition-colors">Anasayfa</a>
+        <a href="../kutsal-savas.html" class="hover:text-gold transition-colors">Kutsal Savaş</a>
+        <a href="../events.html" class="hover:text-gold transition-colors">Olaylar</a>
+        <div class="relative flex items-center">
+          <button id="openSearch" class="ml-2 hover:text-gold transition-colors" style="padding-top: 5px; margin-right: 20px;">
+            <span class="material-symbols-outlined">search</span>
+          </button>
+          <button id="openLogin" class="ml-2 hover:text-gold transition-colors bg-transparent border-0 p-0">
+            <span class="material-symbols-outlined text-2xl">manage_accounts</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Page wrapper (unified block like index) -->
+    <main class="mx-auto">
+      <div class="bg-black/60 border border-border-dark p-6 lg:p-8 rounded-sm" style="overflow: auto;">
+        <article class="prose prose-invert max-w-none">
+          <div class="page-header">
+            <h1 id="title" class="text-4xl font-bold text-white"></h1>
+            <p class="text-gray-400"><em id="meta"></em></p>
+          </div>
+          <div id="page-image" class="my-4"></div>
+          <hr class="border-border-dark my-4"/>
+          <aside id="page-sidebar" class="bg-card-dark p-4 border border-border-dark text-white" style="display:none;"></aside>
+          <div id="tags-bar" class="mb-3"></div>
+          <div id="content"></div>
+          <section id="child-section" class="mt-8" style="display:none;">
+            <div id="child-header" role="button" tabindex="0" aria-controls="child-content" aria-expanded="true" class="flex items-center justify-between cursor-pointer select-none">
+              <h2 class="text-2xl font-semibold text-white mb-0 leading-tight">Alt Sayfalar</h2>
+              <span id="child-toggle-icon" aria-hidden="true" class="material-symbols-outlined text-white transition-transform duration-300 ease-in-out transform-gpu">keyboard_arrow_down</span>
+            </div>
+            <hr class="border-border-dark my-3"/>
+            <div id="child-content">
+              <ul id="child-pages" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 text-white list-none" style="padding-inline-start: 0;"></ul>
+            </div>
+          </section>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  
+  <!-- DOMPurify for sanitization -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  <!-- Search modal and backdrop -->
+  <div id="searchBackdrop" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" style="display:none;"></div>
+  <div id="searchModal" class="fixed inset-0 z-50 flex items-center justify-center p-8" style="display:none;">
+    <div class="relative border border-border-dark p-6 w-full max-w-2xl shadow-lg" style="background-color: rgba(8,8,8,0.95); transform: translateY(-5vh);">
+      <button id="closeSearch" class="absolute right-3 top-3 text-white bg-transparent border-0 p-1 hover:text-gold">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="mb-3">
+        <h3 class="text-lg font-semibold text-white">Sayfalar içinde ara</h3>
+      </div>
+      <div class="mb-4">
+        <input id="modalSearchInput" placeholder="Ara (min 2) — #tag ile filtrele" type="text" autocomplete="off" class="w-full bg-black/30 border border-border-dark text-white rounded py-2 px-3 focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold" />
+      </div>
+      <div id="searchResults" class="space-y-2 max-h-72 overflow-auto text-white"></div>
+    </div>
+  </div>
+
+  <!-- Login modal -->
+  <div id="loginBackdrop" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" style="display:none;"></div>
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-8" style="display:none;">
+    <div class="relative bg-card-dark border border-border-dark p-6 w-full max-w-sm shadow-lg" style="background-color: rgba(8,8,8,0.95);">
+      <button id="closeLogin" class="absolute right-3 top-3 text-white bg-transparent border-0 p-1 hover:text-gold">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <h3 class="text-lg font-semibold text-white mb-4">Giriş Yap</h3>
+      <input id="loginEmail" type="email" placeholder="E-posta" class="w-full mb-3 p-2 bg-black/30 border border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold" />
+      <input id="loginPassword" type="password" placeholder="Şifre" class="w-full mb-3 p-2 bg-black/30 border border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold" />
+      <div class="flex items-center justify-between mb-3">
+        <label class="text-sm text-gray-300"><input id="loginRemember" type="checkbox" class="mr-2"> Beni hatırla</label>
+        <button id="loginBtn" class="bg-gold text-black px-4 py-1 rounded">Giriş</button>
+      </div>
+      <div id="loginError" class="text-red-400 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Image lightbox modal -->
+  <div id="imageBackdrop" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" style="display:none;"></div>
+  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none;">
+    <div class="relative border border-border-dark p-0 shadow-lg" style="background-color: rgba(8,8,8,0.95);">
+      <button id="closeImageModal" class="absolute right-2 top-2 text-white bg-transparent border-0 p-1 hover:text-gold" aria-label="Close image preview">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="flex items-center justify-center" style="min-height: 70vh; padding: 1em 2.5em;">
+        <img id="lightboxImage" alt="Preview" class="block max-w-[85vw] max-h-[92vh] object-contain" />
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="index.js"></script>
+  <script type="module" src="search.js"></script>
+  <script type="module" src="page.js"></script>
+</body>
+</html>

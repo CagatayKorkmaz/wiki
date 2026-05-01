@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etiket Sayfası</title>
+  <link rel="icon" href="../content/velmor.png" type="image/png">
+  <link rel="shortcut icon" href="../content/velmor.png" type="image/png">
+  
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+  <!-- Fontlar -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <style type="text/tailwindcss">
+    body { font-family: 'Cinzel', serif; background-image: url('bg.jpg'); background-size: cover; background-position: center; background-attachment: fixed; }
+    :root { --gold-color: #D4AF37; }
+    p { font-family: 'EB Garamond', serif; }
+    header nav a { font-size: 0.9rem; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+    #tag-pages li { padding-inline-start: 0; margin: 0; }
+    #tag-pages li a h3 { margin: 0; padding: 2px 0; }
+    #tag-pages a { text-decoration: none;}
+    @media (min-width: 768px) { header nav a { font-size: 0.95rem; } }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: 'var(--gold-color)',
+            'background-dark': '#111827',
+            'card-dark': 'rgba(0, 0, 0, 0.55)',
+            'border-dark': 'rgba(255, 255, 255, 0.1)',
+            'text-dark': '#D1D5DB',
+          },
+          fontFamily: { display: ['Cinzel', 'serif'] },
+          spacing: { '28': '7rem' },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="bg-background-dark text-text-dark min-h-screen">
+  <div id="pageBackgroundOverlay" style="position:fixed; inset:0; z-index:0; background: rgba(0,0,0,0.6); pointer-events:none; backdrop-filter: blur(4px);"></div>
+
+  <div class="relative z-10 px-4 md:px-8 lg:px-12 xl:px-28 py-8">
+    <!-- Navbar -->
+    <header class="flex justify-between items-center mb-12">
+      <a href="index.html" class="text-2xl md:text-3xl font-bold text-white hover:text-gold transition-colors">VELMOR WIKI</a>
+      <nav class="flex items-center space-x-6 text-white text-base md:text-lg">
+        <a href="../index.html" class="hover:text-gold transition-colors">Anasayfa</a>
+        <a href="../kutsal-savas.html" class="hover:text-gold transition-colors">Kutsal Savaş</a>
+        <a href="../events.html" class="hover:text-gold transition-colors">Olaylar</a>
+        <div class="relative flex items-center">
+          <button id="openSearch" class="ml-2 hover:text-gold transition-colors" style="padding-top: 5px; margin-right: 20px;">
+            <span class="material-symbols-outlined">search</span>
+          </button>
+          <button id="openLogin" class="ml-2 hover:text-gold transition-colors bg-transparent border-0 p-0">
+            <span class="material-symbols-outlined text-2xl">manage_accounts</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="mx-auto">
+      <div class="bg-black/60 border border-border-dark p-6 lg:p-8 rounded-sm" style="overflow: auto;">
+        <article class="prose prose-invert max-w-none">
+          <div class="page-header">
+            <h1 id="tag-title" class="text-3xl font-bold text-white mb-0"></h1>
+          </div>
+          <hr class="border-border-dark my-4" />
+          <p id="tag-desc" class="text-gray-400"></p>
+          <ul id="tag-pages" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-white list-none" style="padding-inline-start: 0;"></ul>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <!-- Global scripts and modals (match page.html) -->
+  
+  <!-- Search modal and backdrop -->
+  <div id="searchBackdrop" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" style="display:none;"></div>
+  <div id="searchModal" class="fixed inset-0 z-50 flex items-center justify-center p-8" style="display:none;">
+    <div class="relative border border-border-dark p-6 w-full max-w-2xl shadow-lg" style="background-color: rgba(8,8,8,0.95); transform: translateY(-5vh);">
+      <button id="closeSearch" class="absolute right-3 top-3 text-white bg-transparent border-0 p-1 hover:text-gold">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="mb-3">
+        <h3 class="text-lg font-semibold text-white">Sayfalar içinde ara</h3>
+      </div>
+      <div class="mb-4">
+        <input id="modalSearchInput" placeholder="Ara (min 2) — #tag ile filtrele" type="text" class="w-full bg-black/30 border border-border-dark text-white rounded py-2 px-3 focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold" />
+      </div>
+      <div id="searchResults" class="space-y-2 max-h-72 overflow-auto text-white"></div>
+    </div>
+  </div>
+
+  <!-- Login modal -->
+  <div id="loginBackdrop" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" style="display:none;"></div>
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-8" style="display:none;">
+    <div class="relative bg-card-dark border border-border-dark p-6 w-full max-w-sm shadow-lg" style="background-color: rgba(8,8,8,0.95);">
+      <button id="closeLogin" class="absolute right-3 top-3 text-white bg-transparent border-0 p-1 hover:text-gold">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <h3 class="text-lg font-semibold text-white mb-4">Giriş Yap</h3>
+      <input id="loginEmail" type="email" placeholder="E-posta" class="w-full mb-3 p-2 bg-black/30 border border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold" />
+      <input id="loginPassword" type="password" placeholder="Şifre" class="w-full mb-3 p-2 bg-black/30 border border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold" />
+      <div class="flex items-center justify-between mb-3">
+        <label class="text-sm text-gray-300"><input id="loginRemember" type="checkbox" class="mr-2"> Beni hatırla</label>
+        <button id="loginBtn" class="bg-gold text-black px-4 py-1 rounded">Giriş</button>
+      </div>
+      <div id="loginError" class="text-red-400 text-sm"></div>
+    </div>
+  </div>
+
+  <script type="module" src="index.js"></script>
+  <script type="module" src="search.js"></script>
+  <script type="module" src="tag.js"></script>
+</body>
+</html>
